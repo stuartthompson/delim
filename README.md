@@ -11,6 +11,24 @@ let d = Delimited::new("abc:12:def");
 assert_eq!(d.matched(":"), Some(12));
 ```
 
+### Consuming Delimited
+
+The following shows how using a Delimited instance along with consume_matched 
+can be used to extract two different delimited values from a string.
+
+```
+let mut d = Delimited::new("aaa :12: bbb :34: ccc");
+
+// Consume first value (expecting 12)
+let first = d.consume_matched(":");
+
+// Consume second value (expecting 34)
+let second = d.consume_matched(":");
+
+assert_eq!(first, Some(12));
+assert_eq!(second, Some(34));
+```
+
 ## Delimited Pattern Types
 
 There are three primary delimited pattern types:

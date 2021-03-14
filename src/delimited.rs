@@ -89,10 +89,16 @@ mod tests {
 
     #[test]
     fn consume_matched() {
-        let mut d = Delimited::new("abc:12:def:34:ghi");
+        let mut d = Delimited::new("aaa :12: bbb :34: ccc");
 
-        assert_eq!(d.consume_matched(":"), Some(12));
-        assert_eq!(d.consume_matched(":"), Some(34));
+        // Consume first value (expecting 12)
+        let first = d.consume_matched(":");
+
+        // Consume second value (expecting 34)
+        let second = d.consume_matched(":");
+
+        assert_eq!(first, Some(12));
+        assert_eq!(second, Some(34));
     }
 
     #[test]
