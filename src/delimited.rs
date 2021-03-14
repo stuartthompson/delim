@@ -146,6 +146,24 @@ mod tests {
 
     // #endregion tests: matched
 
+    // #region tests: mismatched
+
+    #[test]
+    fn consume_mismatched() {
+        let mut d = Delimited::new("aaa :12; bbb +34| ccc");
+
+        // Consume first value (expecting 12)
+        let first = d.consume_mismatched(":", ";");
+
+        // Consume second value (expecting 34)
+        let second = d.consume_mismatched("+", "|");
+
+        assert_eq!(first, Some(12));
+        assert_eq!(second, Some(34));
+    }
+
+    // #endregion tests: mismatched
+
     // #region tests: delimited
 
     #[test]
