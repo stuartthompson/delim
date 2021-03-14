@@ -3,7 +3,10 @@ name = "delim"
 version = "0.1.0"
 authors = ["Stuart Thompson <stuart@stuartthompson.net>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+description = "Helps with parsing values from delimited strings."
+documentation = "https://github.com/stuartthompson/delim/blob/master/README.md"
+readme = "README.md"
+homepage = "https://github.com/stuartthompson/delim"
+repository = "https://github.com/stuartthompson/delim"
+license = "GPL-3.0-or-later"
+keywords = ["text", "format"]
