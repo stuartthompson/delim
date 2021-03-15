@@ -1,6 +1,6 @@
 # Delim
 
-This crate helps with parsing delimited from strings.
+This crate helps with parsing delimiter-formatted strings.
 
 ## Usage Examples
 
