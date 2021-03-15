@@ -1,14 +1,17 @@
 # Delim
 
-This crate helps with parsing delimiter-formatted strings.
+Helps parse strings that use delimeters to separate values.
 
-## Usage Examples
+## Examples
 
-The following shows how to retrieve a value from a string wrapped by matched 
-delimiters:
+The following retrieves a value wrapped by matched delimiters:
 ```
-let d = Delimited::new("abc:12:def");
-assert_eq!(d.matched(":"), Some(12));
+assert_eq!(Delimited::matched("abc:12:def", ":"), Some(12));
+```
+
+This retrieves a value wrapped within mismatched patterns:
+```
+assert_eq!(Delimited::mismatched("abc<<12*&def", "<<", "*&"), Some(12));
 ```
 
 ### Consuming Delimited
