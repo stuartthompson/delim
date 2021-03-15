@@ -1,11 +1,7 @@
 # Runs unit tests
 name: Tests
 
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+on: push
 
 env:
   CARGO_TERM_COLOR: always
