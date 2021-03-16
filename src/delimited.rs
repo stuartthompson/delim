@@ -19,8 +19,7 @@ impl<'a> Delimited<'a> {
     ///
     /// # Panics
     ///
-    /// This function will panic if the value cannot be parsed to the 
-    ///  specified type.
+    /// If the matched value cannot be parsed to the specified type.
     #[must_use]
     pub fn matched<T>(
         &mut self,
@@ -48,10 +47,9 @@ impl<'a> Delimited<'a> {
     ///
     /// Advances the cursor to the end of the matched value, if found.
     ///
-    ///  # Panics
+    /// # Panics
     ///
-    ///  This function will panic if a matched value cannot be parsed to the 
-    ///   specified type.
+    /// If the matched value cannot be parsed to the specified type.
     #[must_use]
     pub fn mismatched<T>(
         &mut self,

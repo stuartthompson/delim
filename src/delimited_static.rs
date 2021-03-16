@@ -4,6 +4,10 @@
 ///
 /// * `self` - The delimited string to search.
 /// * `delim` - The delimiter to match within.
+///
+/// # Panics
+///
+/// If the matched value cannot be parsed to the specified type.
 #[must_use]
 pub fn matched<T>(s: &str, delim: &str) -> Option<T>
 where
@@ -32,6 +36,10 @@ pub fn matched_s<'a>(s: &'a str, delim: &str) -> Option<&'a str>
 /// * `self` - The delimited string to search.
 /// * `delim_start` - The opening delimiter.
 /// * `delim_end` - The closing delimiter.
+/// 
+/// # Panics
+///
+/// If the matched value cannot be parsed to the specified type.
 #[must_use]
 pub fn mismatched<T>(s: &str, delim_start: &str, delim_end: &str) -> Option<T>
 where
@@ -68,6 +76,10 @@ pub fn mismatched_s<'a>(
 /// * `self` - The delimited string to search.
 /// * `delim` - The delimiter prefix.
 /// * `len` - The length of the prefixed value, in bytes.
+///
+/// # Panics
+///
+/// If the matched value cannot be parsed to the specified type.
 #[must_use]
 pub fn prefixed<T>(s: &str, delim: &str, len: usize) -> Option<T>
 where
