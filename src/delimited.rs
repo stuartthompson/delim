@@ -5,6 +5,7 @@ pub struct Delimited<'a> {
 }
 
 impl<'a> Delimited<'a> {
+    #[must_use]
     /// Returns a new delimited string.
     pub fn new(
         s: &str
@@ -12,7 +13,16 @@ impl<'a> Delimited<'a> {
         Delimited { s, ix: 0 }
     }
 
-    pub fn consume_matched<T>(
+    /// Consumes a value between matched delimiter patterns.
+    ///
+    /// This function advances the cursor of the Delimited to the end of the 
+    ///  matched value if the specified delimiter pattern was found.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if the value cannot be parsed to the 
+    ///  specified type.
+    pub fn matched<T>(
         &mut self,
         delim: &str
     ) -> Option<T>
@@ -20,21 +30,27 @@ impl<'a> Delimited<'a> {
         T: std::str::FromStr,
         T::Err: std::fmt::Debug,
     {
-        if let Some(m) = self.consume_matched_s(delim) {
-            Some(m.parse::<T>().unwrap())
-        } else {
-            None
-        }
+        self.matched_s(delim)
+            .map_or(None, |m| Some(m.parse::<T>().unwrap()))
     }
 
-    pub fn consume_matched_s(
+    pub fn matched_s(
         &mut self,
         delim: &str
     ) -> Option<&'a str> {
-        self.consume_mismatched_s(delim, delim)
+        self.mismatched_s(delim, delim)
     }
 
-    pub fn consume_mismatched<T>(
+    /// Returns a value between mismatched delimiter patterns.
+    ///
+    /// This function advances the cursor of the Delimited to the end of the 
+    ///  matched value if the specified delimiter pattern was found.
+    ///
+    ///  # Panics
+    ///
+    ///  This function will panic if a matched value cannot be parsed to the 
+    ///   specified type.
+    pub fn mismatched<T>(
         &mut self,
         delim_start: &str,
         delim_end: &str
@@ -43,23 +59,20 @@ impl<'a> Delimited<'a> {
         T: std::str::FromStr,
         T::Err: std::fmt::Debug,
     {
-        if let Some(s) = self.consume_mismatched_s(delim_start, delim_end) {
-            Some(s.parse::<T>().unwrap())
-        } else {
-            None
-        }
+        self.mismatched_s(delim_start, delim_end)
+            .map_or(None, |m| Some(m.parse::<T>().unwrap()))
     }
 
-    pub fn consume_mismatched_s(
+    pub fn mismatched_s(
         &mut self,
         delim_start: &str,
         delim_end: &str
     ) -> Option<&'a str> 
     {
-        self.consume_delimited(delim_start, delim_end)
+        self.delimited(delim_start, delim_end)
     }
 
-    fn consume_delimited(
+    fn delimited(
         &mut self,
         delim_start: &str,
         delim_end: &str
@@ -88,60 +101,60 @@ mod tests {
     // #region tests: matched
 
     #[test]
-    fn consume_matched() {
+    fn matched() {
         let mut d = Delimited::new("aaa :12: bbb :34: ccc");
 
         // Consume first value (expecting 12)
-        let first = d.consume_matched(":");
+        let first = d.matched(":");
 
         // Consume second value (expecting 34)
-        let second = d.consume_matched(":");
+        let second = d.matched(":");
 
         assert_eq!(first, Some(12));
         assert_eq!(second, Some(34));
     }
 
     #[test]
-    fn consume_matched_empty() {
+    fn matched_empty() {
         let mut d = Delimited::new("");
 
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     #[test]
-    fn consume_matched_missing_start() {
+    fn matched_missing_start() {
         let mut d = Delimited::new("abc:12def");
 
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     #[test]
-    fn consume_matched_missing_end() {
+    fn matched_missing_end() {
         let mut d = Delimited::new("abc12:def");
 
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     #[test]
-    fn consume_matched_missing_both() {
+    fn matched_missing_both() {
         let mut d = Delimited::new("abc12def");
 
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     #[test]
-    fn consume_matched_uneven_delimiters() {
+    fn matched_uneven_delimiters() {
         let mut d = Delimited::new("abc:12:def:34ghi");
 
-        assert_eq!(d.consume_matched(":"), Some(12));
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched(":"), Some(12));
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     #[test]
-    fn consume_matched_empty_delimited_value() {
+    fn matched_empty_delimited_value() {
         let mut d = Delimited::new("abc::def");
 
-        assert_eq!(d.consume_matched::<usize>(":"), None);
+        assert_eq!(d.matched::<usize>(":"), None);
     }
 
     // #endregion tests: matched
@@ -149,14 +162,14 @@ mod tests {
     // #region tests: mismatched
 
     #[test]
-    fn consume_mismatched() {
+    fn mismatched() {
         let mut d = Delimited::new("aaa :12; bbb +34| ccc");
 
         // Consume first value (expecting 12)
-        let first = d.consume_mismatched(":", ";");
+        let first = d.mismatched(":", ";");
 
         // Consume second value (expecting 34)
-        let second = d.consume_mismatched("+", "|");
+        let second = d.mismatched("+", "|");
 
         assert_eq!(first, Some(12));
         assert_eq!(second, Some(34));
@@ -167,10 +180,10 @@ mod tests {
     // #region tests: delimited
 
     #[test]
-    fn consume_delimited() {
+    fn delimited() {
         let mut d = Delimited::new("abc:12;def");
         
-        assert_eq!(d.consume_delimited(":", ";"), Some("12"));
+        assert_eq!(d.delimited(":", ";"), Some("12"));
     }
 
     // #endregion tests: delimited

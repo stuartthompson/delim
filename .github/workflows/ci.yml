@@ -18,6 +18,7 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
+            toolchain: stable
             components: rustfmt, clippy
       - name: Lint
         run: cargo clippy -- -Dclippy::all -Dclippy::pedantic
