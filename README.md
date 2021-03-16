@@ -1,5 +1,7 @@
 # Delim
 
+[<img alt="github" src="https://img.shields.io/github/workflow/status/stuartthompson/delim/CI" height="20">](https://github.com/stuartthompson/delim)
+
 Helps parse strings that use delimeters to separate values.
 
 ## Examples
