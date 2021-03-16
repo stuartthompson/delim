@@ -42,7 +42,7 @@ jobs:
         run: cargo test --verbose
 
   nightly:
-          name: Nightly Toolchain
+    name: Nightly Toolchain
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
