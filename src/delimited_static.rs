@@ -4,16 +4,13 @@
 ///
 /// * `self` - The delimited string to search.
 /// * `delim` - The delimiter to match within.
+#[must_use]
 pub fn matched<T>(s: &str, delim: &str) -> Option<T>
 where
     T: std::str::FromStr,
     T::Err: std::fmt::Debug,
 {
-    if let Some(s) = matched_s(&s, delim) {
-        Some(s.parse::<T>().unwrap())
-    } else {
-        None
-    }
+    matched_s(&s, delim).map(|m| m.parse::<T>().unwrap())
 }
 
 /// Returns a substring between enclosing matched delimiters.
@@ -22,7 +19,9 @@ where
 ///
 /// * `self` - The delimited string to search.
 /// * `delim` - The enclosing delimiter.
-pub fn matched_s<'a>(s: &'a str, delim: &str) -> Option<&'a str> {
+#[must_use]
+pub fn matched_s<'a>(s: &'a str, delim: &str) -> Option<&'a str> 
+{
     mismatched_s(&s, delim, delim)
 }
 
@@ -33,16 +32,13 @@ pub fn matched_s<'a>(s: &'a str, delim: &str) -> Option<&'a str> {
 /// * `self` - The delimited string to search.
 /// * `delim_start` - The opening delimiter.
 /// * `delim_end` - The closing delimiter.
+#[must_use]
 pub fn mismatched<T>(s: &str, delim_start: &str, delim_end: &str) -> Option<T>
 where
     T: std::str::FromStr,
     T::Err: std::fmt::Debug,
 {
-    if let Some(s) = mismatched_s(&s, delim_start, delim_end) {
-        Some(s.parse::<T>().unwrap())
-    } else {
-        None
-    }
+    mismatched_s(&s, delim_start, delim_end).map(|m| m.parse::<T>().unwrap())
 }
 
 /// Returns a substring between enclosing mismatched delimiters from part of a 
@@ -53,21 +49,16 @@ where
 /// * `self` - The delimited string to search.
 /// * `delim_start` - The opening delimiter.
 /// * `delim_end` - The closing delimiter.
+#[must_use]
 pub fn mismatched_s<'a>(
     s: &'a str,
     delim_start: &str,
     delim_end: &str,
 ) -> Option<&'a str> {
-    if let Some(mut s_ix) = &s.find(delim_start) {
+    s.find(delim_start).and_then(|mut s_ix| {
         s_ix += 1; // Consume matched leading delim
-        if let Some(e_ix) = &s[s_ix..].find(delim_end) {
-            Some(&s[s_ix..e_ix + s_ix])
-        } else {
-            None
-        }
-    } else {
-        None
-    }
+        s[s_ix..].find(delim_end).map(|e_ix| &s[s_ix..e_ix + s_ix])
+    })
 }
 
 /// Returns a value prefixed by a delimiter.
@@ -77,16 +68,13 @@ pub fn mismatched_s<'a>(
 /// * `self` - The delimited string to search.
 /// * `delim` - The delimiter prefix.
 /// * `len` - The length of the prefixed value, in bytes.
+#[must_use]
 pub fn prefixed<T>(s: &str, delim: &str, len: usize) -> Option<T>
 where
     T: std::str::FromStr,
     T::Err: std::fmt::Debug,
 {
-    if let Some(s) = prefixed_s(&s, delim, len) {
-        Some(s.parse::<T>().unwrap())
-    } else {
-        None
-    }
+    prefixed_s(&s, delim, len).map(|m| m.parse::<T>().unwrap())
 }
 
 /// Returns a substring of bytes following a prefix delimiter.
@@ -96,13 +84,13 @@ where
 /// * `self` - The delimited string to search.
 /// * `delim` - The prefix delimiter.
 /// * `len` - The length of the prefixed substring, in bytes.
-pub fn prefixed_s<'a>(s: &'a str, delim: &str, len: usize) -> Option<&'a str> {
-    if let Some(mut s_ix) = &s.find(delim) {
+#[must_use]
+pub fn prefixed_s<'a>(s: &'a str, delim: &str, len: usize) -> Option<&'a str>
+{
+    s.find(delim).map(|mut s_ix| {
         s_ix += 1; // Consume matched leading delim
-        Some(&s[s_ix..s_ix + len])
-    } else {
-        None
-    }
+        &s[s_ix..s_ix + len]
+    })
 }
 
 #[cfg(test)]

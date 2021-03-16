@@ -5,23 +5,23 @@ pub struct Delimited<'a> {
 }
 
 impl<'a> Delimited<'a> {
-    #[must_use]
     /// Returns a new delimited string.
+    #[must_use]
     pub fn new(
         s: &str
     ) -> Delimited {
         Delimited { s, ix: 0 }
     }
 
-    /// Consumes a value between matched delimiter patterns.
+    /// Returns the next value between the supplied matched delimiters.
     ///
-    /// This function advances the cursor of the Delimited to the end of the 
-    ///  matched value if the specified delimiter pattern was found.
+    /// Advances the cursor to the end of the matched value, if found.
     ///
     /// # Panics
     ///
     /// This function will panic if the value cannot be parsed to the 
     ///  specified type.
+    #[must_use]
     pub fn matched<T>(
         &mut self,
         delim: &str
@@ -33,6 +33,10 @@ impl<'a> Delimited<'a> {
         self.matched_s(delim).map(|m| m.parse::<T>().unwrap())
     }
 
+    /// Returns the next string value between matched delimiters.
+    ///
+    /// Advances the cursor to the end of the matched value, if found.
+    #[must_use]
     pub fn matched_s(
         &mut self,
         delim: &str
@@ -40,15 +44,15 @@ impl<'a> Delimited<'a> {
         self.mismatched_s(delim, delim)
     }
 
-    /// Returns a value between mismatched delimiter patterns.
+    /// Returns the next value between mismatched delimiters.
     ///
-    /// This function advances the cursor of the Delimited to the end of the 
-    ///  matched value if the specified delimiter pattern was found.
+    /// Advances the cursor to the end of the matched value, if found.
     ///
     ///  # Panics
     ///
     ///  This function will panic if a matched value cannot be parsed to the 
     ///   specified type.
+    #[must_use]
     pub fn mismatched<T>(
         &mut self,
         delim_start: &str,
@@ -62,6 +66,10 @@ impl<'a> Delimited<'a> {
             .map(|m| m.parse::<T>().unwrap())
     }
 
+    /// Returns the next string value between mismatched delimiters.
+    ///
+    /// Advances the cursor to the end of the matched value, if found.
+    #[must_use]
     pub fn mismatched_s(
         &mut self,
         delim_start: &str,
