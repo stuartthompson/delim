@@ -30,8 +30,7 @@ impl<'a> Delimited<'a> {
         T: std::str::FromStr,
         T::Err: std::fmt::Debug,
     {
-        self.matched_s(delim)
-            .map_or(None, |m| Some(m.parse::<T>().unwrap()))
+        self.matched_s(delim).map(|m| m.parse::<T>().unwrap())
     }
 
     pub fn matched_s(
@@ -60,7 +59,7 @@ impl<'a> Delimited<'a> {
         T::Err: std::fmt::Debug,
     {
         self.mismatched_s(delim_start, delim_end)
-            .map_or(None, |m| Some(m.parse::<T>().unwrap()))
+            .map(|m| m.parse::<T>().unwrap())
     }
 
     pub fn mismatched_s(
@@ -79,10 +78,10 @@ impl<'a> Delimited<'a> {
     ) -> Option<&'a str> 
     {
         self.s[self.ix..].find(delim_start)
-            .map_or(None, |s_ix| {
+            .and_then(|s_ix| {
                 let from = self.ix + s_ix + 1; // Consume matched leading delim
                 self.s[from..].find(delim_end)
-                    .map_or(None, |len| {
+                    .and_then(|len| {
                         if len > 0 {
                             self.ix += s_ix + len + 2;
                             Some(&self.s[from..from + len])
