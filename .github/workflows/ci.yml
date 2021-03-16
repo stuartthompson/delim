@@ -23,9 +23,17 @@ jobs:
       - name: Lint
         run: cargo clippy -- -Dclippy::all -Dclippy::pedantic
 
-  check:
-    name: Check
+  check-windows:
+    name: Check (Windows)
     runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check
+        run: cargo check
+
+  check-linux:
+    name: Check (Linux)
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Check
