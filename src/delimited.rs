@@ -78,20 +78,18 @@ impl<'a> Delimited<'a> {
         delim_end: &str
     ) -> Option<&'a str> 
     {
-        if let Some(s_ix) = &self.s[self.ix..].find(delim_start) {
-            let from = self.ix + s_ix + 1; // Consume matched leading delim
-            if let Some(len) = &self.s[from..].find(delim_end) {
-                if *len > 0 {
-                    self.ix += s_ix + len + 2;
-                    Some(&self.s[from..from + len])
-                } else { None }
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    }
+        self.s[self.ix..].find(delim_start)
+            .map_or(None, |s_ix| {
+                let from = self.ix + s_ix + 1; // Consume matched leading delim
+                self.s[from..].find(delim_end)
+                    .map_or(None, |len| {
+                        if len > 0 {
+                            self.ix += s_ix + len + 2;
+                            Some(&self.s[from..from + len])
+                        } else { None }
+                })
+        })
+   }
 }
 
 #[cfg(test)]
