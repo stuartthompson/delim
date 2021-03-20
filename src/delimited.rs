@@ -13,6 +13,43 @@ impl<'a> Delimited<'a> {
         Delimited { s, ix: 0 }
     }
 
+    /// Parses a value from a specified number of bytes after the cursor.
+    ///
+    /// Advanced the cursor by the specified number of bytes.
+    ///
+    /// # Panics
+    ///
+    /// If the matched value cannot be parsed to the specified type.
+    pub fn bytes<T>(
+        &mut self,
+        bytes: usize,
+    ) -> Option<T>
+    where
+        T: std::str::FromStr,
+        T::Err: std::fmt::Debug,
+    {
+        let r = self.s[self.ix..self.ix + bytes].parse::<T>().unwrap();
+        self.ix = self.ix + bytes;
+        Some(r)
+    }
+
+    /// Parses a value from a specified number of bytes after the cursor.
+    ///
+    /// Advanced the cursor by the specified number of bytes.
+    ///
+    /// # Panics
+    ///
+    /// If the matched value cannot be parsed to the specified type.
+    pub fn bytes_s<T>(
+        &mut self,
+        bytes: usize,
+    ) -> &str
+    {
+        let start = self.ix;
+        self.ix = self.ix + bytes;
+        &self.s[start..self.ix]
+    }
+
     /// Returns the next value between the supplied matched delimiters.
     ///
     /// Advances the cursor to the end of the matched value, if found.
@@ -100,6 +137,20 @@ impl<'a> Delimited<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // #region tests: raw
+    
+    #[test]
+    fn raw() {
+        let mut d = Delimited::new("12abc");
+
+        // Consume the first two bytes as a u8
+        let result = d.bytes::<u8>(2);
+
+        assert_eq!(result, Some(12));
+    }
+
+    // #endregion tests: raw
 
     // #region tests: matched
 
