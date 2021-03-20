@@ -21,7 +21,7 @@ assert_eq!(Delimited::mismatched("abc<<12*&def", "<<", "*&"), Some(12));
 
 ### Consuming Delimited
 
-The following shows how using a Delimited instance along with consume_matched 
+The following shows how using a Delimited instance along with consume\_matched 
 can be used to extract two different delimited values from a string.
 
 ```
@@ -44,6 +44,22 @@ There are three primary delimited pattern types:
 * Matched delimiters
 * Mismatched delimiters
 * Prefixed
+
+Additionally, a number of bytes can be consumed raw (without delimiters) and 
+either returned as a string or parsed to a specified type.
+
+### Raw Bytes Example
+
+In the following string, the value 12 occupies the first two bytes.
+```
+12abc
+```
+
+The first two bytes can be consumed as a u8 with the following:
+```
+let d = Delimited::new("12abc");
+assert_eq!(d.bytes::<u8>(2), Some(12));
+```
 
 ### Matched Delimiters Example
 
