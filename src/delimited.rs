@@ -29,7 +29,7 @@ impl<'a> Delimited<'a> {
         T::Err: std::fmt::Debug,
     {
         let r = self.s[self.ix..self.ix + bytes].parse::<T>().unwrap();
-        self.ix = self.ix + bytes;
+        self.ix += bytes;
         Some(r)
     }
 
@@ -46,7 +46,7 @@ impl<'a> Delimited<'a> {
     ) -> &str
     {
         let start = self.ix;
-        self.ix = self.ix + bytes;
+        self.ix += bytes;
         &self.s[start..self.ix]
     }
 
